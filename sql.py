@@ -15,7 +15,7 @@ cursor.execute(
 )
 
 cursor.execute(
-    "CREATE TABLE IF NOT EXISTS orders (id INT AUTO_INCREMENT PRIMARY KEY, client_name VARCHAR(255) NOT NULL, lab_vessel_code INT NOT NULL, services MEDIUMTEXT NOT NULL, total_cost DECIMAL(10, 2) NOT NULL)"
+    "CREATE TABLE IF NOT EXISTS orders (id INT AUTO_INCREMENT PRIMARY KEY, client_name VARCHAR(255) NOT NULL, lab_vessel_code INT NOT NULL, services MEDIUMTEXT NOT NULL, total_cost DECIMAL(10, 2) NOT NULL, checked BOOLEAN NOT NULL)"
 )
 
 cursor.execute(
@@ -23,7 +23,7 @@ cursor.execute(
 )
 
 cursor.execute(
-    "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, login VARCHAR(255) UNIQUE, password VARCHAR(255))"
+    "CREATE TABLE IF NOT EXISTS users (id INT AUTO_INCREMENT PRIMARY KEY, login VARCHAR(255) UNIQUE, password VARCHAR(255), role INT)"
 )
 
 db.commit()
@@ -40,7 +40,7 @@ db.commit()
 #
 # cursor.executemany(sql, val)
 # db.commit()
-
+#
 # sql = "INSERT INTO lab_vessels (vessel_name) VALUES (%s)"
 # values = [("Мензурка ",), ("Колба ",), ("Пробирка",), ("Чашка Петри",)]
 # cursor.executemany(sql, values)

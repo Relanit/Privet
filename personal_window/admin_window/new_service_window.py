@@ -1,5 +1,3 @@
-import traceback
-
 from PyQt6 import QtWidgets
 from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
@@ -47,9 +45,9 @@ class NewServiceWindow(QMainWindow):
         buttons_layout.addWidget(self.save_service_button)
         self.save_service_button.clicked.connect(self.save_service)
 
-        self.to_admin_button = QPushButton("Назад")
-        buttons_layout.addWidget(self.to_admin_button)
-        self.to_admin_button.clicked.connect(self.to_admin)
+        self.to_personal_button = QPushButton("Назад")
+        buttons_layout.addWidget(self.to_personal_button)
+        self.to_personal_button.clicked.connect(self.to_personal)
 
         layout.addWidget(buttons_box)
 
@@ -71,26 +69,22 @@ class NewServiceWindow(QMainWindow):
             QtWidgets.QMessageBox.warning(self, "Ошибка", "Введите стоимость услуги")
             return
 
-        try:
+        cursor.execute(f"SELECT * FROM services WHERE LOWER(name) = LOWER('{name}')")
+        if service := cursor.fetchone():
+            QtWidgets.QMessageBox.warning(self, "Ошибка", "Такая услуга уже есть")
+            return
 
-            cursor.execute(f"SELECT * FROM services WHERE LOWER(name) = LOWER('{name}')")
-            if service := cursor.fetchone():
-                QtWidgets.QMessageBox.warning(self, "Ошибка", "Такая услуга уже есть")
-                return
+        cursor.execute(
+            "INSERT INTO services (name, cost) VALUES (%s, %s)",
+            (name, float(cost)),
+        )
+        db.commit()
 
-            cursor.execute(
-                "INSERT INTO services (name, cost) VALUES (%s, %s)",
-                (name, float(cost)),
-            )
-            db.commit()
+        QtWidgets.QMessageBox.information(self, "Успех", "Услуга добавлена")
 
-            QtWidgets.QMessageBox.information(self, "Успех", "Услуга добавлена")
+        self.name_input.setText("")
+        self.cost_input.setText("")
 
-            self.name_input.setText("")
-            self.cost_input.setText("")
-        except:
-            traceback.print_exc()
-
-    def to_admin(self):
+    def to_personal(self):
         self.deleteLater()
-        self.parent.to_admin()
+        self.parent.to_personal()

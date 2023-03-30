@@ -15,7 +15,7 @@ from PyQt6.QtWidgets import (
 from sql import db, cursor
 
 
-class LoginWindow(QMainWindow):
+class NewWorkerWindow(QMainWindow):
     def __init__(self, parent):
         super().__init__()
 
@@ -49,17 +49,17 @@ class LoginWindow(QMainWindow):
         buttons_layout = QHBoxLayout()
         buttons_box.setLayout(buttons_layout)
 
-        self.login_button = QPushButton("Авторизация")
-        buttons_layout.addWidget(self.login_button)
-        self.login_button.clicked.connect(self.log_in)
+        self.create_worker_button = QPushButton("Добавить контролёра")
+        buttons_layout.addWidget(self.create_worker_button)
+        self.create_worker_button.clicked.connect(self.create_worker)
 
-        self.signup_button = QPushButton("Регистрация")
-        buttons_layout.addWidget(self.signup_button)
-        self.signup_button.clicked.connect(self.sign_up)
+        self.to_personal_button = QPushButton("Назад")
+        buttons_layout.addWidget(self.to_personal_button)
+        self.to_personal_button.clicked.connect(self.to_personal)
 
         layout.addWidget(buttons_box)
 
-    def log_in(self):
+    def create_worker(self):
         login = self.login.text().lower()
         if not login:
             QtWidgets.QMessageBox.warning(self, "Ошибка", "Введите логин")
@@ -73,46 +73,22 @@ class LoginWindow(QMainWindow):
         cursor.execute(f"SELECT * FROM users WHERE login = '{login}'")
         user = cursor.fetchone()
 
-        if not user:
+        if user:
             QtWidgets.QMessageBox.warning(
-                self, "Ошибка", "Пользователь не найден, зарегистрируйтесь"
-            )
-            return
-
-        if password != user[2]:
-            QtWidgets.QMessageBox.warning(
-                self, "Ошибка", "Неверный пароль"
-            )
-            self.password.setText("")
-            return
-
-        QtWidgets.QMessageBox.information(self, "Успех", "Вы авторизовались")
-
-        self.parent.to_personal(login, user[3])
-
-    def sign_up(self):
-        login = self.login.text().lower()
-        if not login:
-            QtWidgets.QMessageBox.warning(self, "Ошибка", "Введите логин")
-            return
-
-        password = self.password.text()
-        if not password:
-            QtWidgets.QMessageBox.warning(self, "Ошибка", "Введите пароль")
-            return
-
-        cursor.execute(f"SELECT * FROM users WHERE login = '{login}'")
-        if user := cursor.fetchone():
-            QtWidgets.QMessageBox.warning(
-                self, "Ошибка", "Пользователь уже зарегестрирован"
+                self, "Ошибка", "Пользователь с таким логином уже существует"
             )
             return
 
         cursor.execute(
             "INSERT INTO users (login, password, role) VALUES (%s, %s, %s)",
-            (login, password, 1),
+            (login, password, 2),
         )
         db.commit()
 
-        QtWidgets.QMessageBox.information(self, "Успех", "Вы зарегистрированы")
-        self.parent.to_personal(login, 1)
+        QtWidgets.QMessageBox.information(self, "Успех", "Пользователь создан")
+
+
+
+    def to_personal(self):
+        self.deleteLater()
+        self.parent.to_personal()

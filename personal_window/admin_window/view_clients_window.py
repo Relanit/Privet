@@ -34,9 +34,9 @@ class ViewClientsWindow(QMainWindow):
         container = QWidget()
         scroll_layout = QVBoxLayout(container)
 
-        self.to_admin_button = QPushButton("Назад")
-        scroll_layout.addWidget(self.to_admin_button)
-        self.to_admin_button.clicked.connect(self.to_admin)
+        self.to_personal_button = QPushButton("Назад")
+        scroll_layout.addWidget(self.to_personal_button)
+        self.to_personal_button.clicked.connect(self.to_personal)
 
         for client in clients:
             client_box = QGroupBox()
@@ -54,6 +54,6 @@ class ViewClientsWindow(QMainWindow):
         scroll_area.setWidget(container)
         self.setCentralWidget(scroll_area)
 
-    def to_admin(self):
+    def to_personal(self):
         self.deleteLater()
-        self.parent.to_admin()
+        self.parent.to_personal()

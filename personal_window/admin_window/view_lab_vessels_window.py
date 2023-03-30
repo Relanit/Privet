@@ -37,9 +37,9 @@ class ViewLabVesselsWindow(QMainWindow):
         columns_layout = QGridLayout()
         columns_box.setLayout(columns_layout)
 
-        self.to_admin_button = QPushButton("Назад")
-        columns_layout.addWidget(self.to_admin_button, 0, 0)
-        self.to_admin_button.clicked.connect(self.to_admin)
+        self.to_personal_button = QPushButton("Назад")
+        columns_layout.addWidget(self.to_personal_button, 0, 0)
+        self.to_personal_button.clicked.connect(self.to_personal)
 
         columns_layout.addWidget(QLabel("ID"), 1, 0)
         columns_layout.addWidget(QLabel("Название"), 1, 1)
@@ -53,6 +53,6 @@ class ViewLabVesselsWindow(QMainWindow):
         scroll_area.setWidget(container)
         self.setCentralWidget(scroll_area)
 
-    def to_admin(self):
+    def to_personal(self):
         self.deleteLater()
-        self.parent.to_admin()
+        self.parent.to_personal()

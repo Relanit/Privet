@@ -10,13 +10,14 @@ from PyQt6.QtWidgets import (
 from sql import cursor
 
 
-class AdminWindow(QMainWindow):
-    def __init__(self, parent, login):
+class PersonalWindow(QMainWindow):
+    def __init__(self, parent, login, role):
         super().__init__()
 
         self.parent = parent
         self.setCentralWidget(QWidget())
         self.login = login
+        self.role = role
 
         self.init_ui()
 
@@ -31,7 +32,7 @@ class AdminWindow(QMainWindow):
         layout.addWidget(QLabel("Информация об аккаунте:"))
         layout.addWidget(QLabel(f"id: {user[0]}"))
         layout.addWidget(QLabel(f"Логин: {self.login}"))
-        layout.addWidget(QLabel(f"Пароль: {user[2]}"))
+        layout.addWidget(QLabel(f"Роль: {'админ' if user[3] == 1 else 'контролёр'}"))
 
         buttons_box = QGroupBox()
         buttons_layout = QGridLayout()
@@ -42,25 +43,30 @@ class AdminWindow(QMainWindow):
         buttons_layout.addWidget(self.logout_button, 0, 0)
         self.logout_button.clicked.connect(self.log_out)
 
-        self.create_order_button = QPushButton("Сформировать заказ")
-        buttons_layout.addWidget(self.create_order_button, 0, 1)
-        self.create_order_button.clicked.connect(self.new_order)
-
         self.view_orders_button = QPushButton("Список заказов")
-        buttons_layout.addWidget(self.view_orders_button, 1, 0)
+        buttons_layout.addWidget(self.view_orders_button, 0, 1)
         self.view_orders_button.clicked.connect(self.view_orders)
 
-        self.view_clients_button = QPushButton("Список клиентов")
-        buttons_layout.addWidget(self.view_clients_button, 1, 1)
-        self.view_clients_button.clicked.connect(self.view_clients)
+        if self.role == 1:
+            self.create_order_button = QPushButton("Сформировать заказ")
+            buttons_layout.addWidget(self.create_order_button, 1, 0)
+            self.create_order_button.clicked.connect(self.new_order)
 
-        self.view_vessels_button = QPushButton("Список лабораторных сосудов")
-        buttons_layout.addWidget(self.view_vessels_button, 2, 0)
-        self.view_vessels_button.clicked.connect(self.view_vessels)
+            self.view_clients_button = QPushButton("Список клиентов")
+            buttons_layout.addWidget(self.view_clients_button, 1, 1)
+            self.view_clients_button.clicked.connect(self.view_clients)
 
-        self.create_service_button = QPushButton("Создание услуги")
-        buttons_layout.addWidget(self.create_service_button, 2, 1)
-        self.create_service_button.clicked.connect(self.new_service)
+            self.view_vessels_button = QPushButton("Список лабораторных сосудов")
+            buttons_layout.addWidget(self.view_vessels_button, 2, 0)
+            self.view_vessels_button.clicked.connect(self.view_vessels)
+
+            self.create_service_button = QPushButton("Создание услуги")
+            buttons_layout.addWidget(self.create_service_button, 2, 1)
+            self.create_service_button.clicked.connect(self.new_service)
+
+            self.create_new_worker = QPushButton("Добавить контролёра")
+            buttons_layout.addWidget(self.create_new_worker, 3, 0)
+            self.create_new_worker.clicked.connect(self.new_worker)
 
         layout.addWidget(buttons_box)
 
@@ -82,3 +88,6 @@ class AdminWindow(QMainWindow):
 
     def new_service(self):
         self.parent.to_new_service()
+
+    def new_worker(self):
+        self.parent.to_new_worker()

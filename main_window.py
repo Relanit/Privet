@@ -6,13 +6,14 @@ from PyQt6.QtWidgets import (
     QStackedWidget,
 )
 
-from admin_window import AdminWindow
 from login_window import LoginWindow
-from new_order_window import NewOrderWindow
-from new_service_window import NewServiceWindow
-from view_clients_window import ViewClientsWindow
-from view_lab_vessels_window import ViewLabVesselsWindow
-from view_orders_window import ViewOrdersWindow
+from personal_window.admin_window.new_order_window.new_order_window import NewOrderWindow
+from personal_window.admin_window.new_service_window import NewServiceWindow
+from personal_window.admin_window.new_worker_window import NewWorkerWindow
+from personal_window.admin_window.view_clients_window import ViewClientsWindow
+from personal_window.admin_window.view_lab_vessels_window import ViewLabVesselsWindow
+from personal_window.personal_window import PersonalWindow
+from personal_window.view_orders_window import ViewOrdersWindow
 
 
 class MainWindow(QMainWindow):
@@ -29,10 +30,10 @@ class MainWindow(QMainWindow):
         self.stacked_widget.addWidget(self.login_window)
         self.setWindowTitle("Вход")
 
-    def to_admin(self, login=None):
+    def to_personal(self, login=None, role=None):
         if login:
             self.login_window.deleteLater()
-            self.personal_window = AdminWindow(self, login)
+            self.personal_window = PersonalWindow(self, login, role)
             self.stacked_widget.addWidget(self.personal_window)
 
         self.stacked_widget.setCurrentIndex(0)
@@ -73,6 +74,12 @@ class MainWindow(QMainWindow):
         self.stacked_widget.addWidget(self.new_service_window)
         self.stacked_widget.setCurrentIndex(1)
         self.setWindowTitle("Создание услуги")
+
+    def to_new_worker(self):
+        self.new_worker_window = NewWorkerWindow(self)
+        self.stacked_widget.addWidget(self.new_worker_window)
+        self.stacked_widget.setCurrentIndex(1)
+        self.setWindowTitle("Добавление контролёра")
 
 
 if __name__ == "__main__":

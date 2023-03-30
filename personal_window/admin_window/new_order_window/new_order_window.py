@@ -1,3 +1,5 @@
+import traceback
+
 from PyQt6 import QtWidgets
 from PyQt6.QtWidgets import (
     QMainWindow,
@@ -11,7 +13,9 @@ from PyQt6.QtWidgets import (
     QHBoxLayout,
 )
 
-from new_client_window import NewClientWindow
+from personal_window.admin_window.new_order_window.new_client_window import (
+    NewClientWindow,
+)
 
 from sql import db, cursor
 
@@ -56,9 +60,9 @@ class NewOrderWindow(QMainWindow):
         buttons_layout.addWidget(self.save_order_button)
         self.save_order_button.clicked.connect(lambda: self.save_order(costs))
 
-        self.to_admin_button = QPushButton("Назад")
-        buttons_layout.addWidget(self.to_admin_button)
-        self.to_admin_button.clicked.connect(self.to_admin)
+        self.to_personal_button = QPushButton("Назад")
+        buttons_layout.addWidget(self.to_personal_button)
+        self.to_personal_button.clicked.connect(self.to_personal)
 
         layout.addWidget(buttons_box)
 
@@ -108,12 +112,6 @@ class NewOrderWindow(QMainWindow):
 
         client_name = client[1]
 
-        if not lab_vessel:
-            QtWidgets.QMessageBox.warning(
-                self, "Ошибка", "Лаборантский сосуд с таким кодом не найден"
-            )
-            return
-
         total_cost = 0
 
         service_names = []
@@ -130,8 +128,8 @@ class NewOrderWindow(QMainWindow):
         service_names = ", ".join(service_names)
 
         cursor.execute(
-            "INSERT INTO orders (client_name, lab_vessel_code, services, total_cost) VALUES (%s, %s, %s, %s)",
-            (client_name, lab_vessel_code, service_names, total_cost),
+            "INSERT INTO orders (client_name, lab_vessel_code, services, total_cost, checked) VALUES (%s, %s, %s, %s, %s)",
+            (client_name, lab_vessel_code, service_names, total_cost, 0),
         )
         db.commit()
 
@@ -144,6 +142,6 @@ class NewOrderWindow(QMainWindow):
             if checkbox.isChecked():
                 checkbox.setChecked(False)
 
-    def to_admin(self):
+    def to_personal(self):
         self.deleteLater()
-        self.parent.to_admin()
+        self.parent.to_personal()
